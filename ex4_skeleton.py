@@ -5,8 +5,10 @@ from scapy.layers.dns import DNS, DNSQR, DNSRR, IP, sr1, UDP
 import scapy.all as scapy
 import time
 
-DOOFENSHMIRTZ_IP = "???"  # Enter the computer you attack's IP.
-SECRATERY_IP = "???"  # Enter the attacker's IP.
+from scapy.sendrecv import send, srp
+
+DOOFENSHMIRTZ_IP = "172.20.112.1"  # Enter the computer you attack's IP.
+SECRATERY_IP = "127.0.0.1"  # Enter the attacker's IP.
 NETWORK_DNS_SERVER_IP = "???"  # Enter the network's DNS server's IP.
 SPOOF_SLEEP_TIME = 2
 
@@ -49,6 +51,9 @@ class ArpSpoofer(object):
         If not initialized yet, sends an ARP request to the target and waits for a response.
         @return the mac address of the target.
         """
+        ans, unans = srp(Ether(dst="ff:ff:ff:ff:ff:ff")/ARP(pdst=self.spoof_ip), timeout=2)
+        print(ans, unans)
+
         pass
 
     def spoof(self) -> None:
@@ -160,8 +165,10 @@ class DnsHandler(object):
 if __name__ == "__main__":
     plist = []
     spoofer = ArpSpoofer(plist, DOOFENSHMIRTZ_IP, NETWORK_DNS_SERVER_IP)
-    server = DnsHandler(plist, SPOOF_DICT)
+    # server = DnsHandler(plist, SPOOF_DICT)
+    #
+    # print("Starting sub-processes...")
+    # server.start()
+    # spoofer.start()
 
-    print("Starting sub-processes...")
-    server.start()
-    spoofer.start()
+    spoofer.get_target_mac()
