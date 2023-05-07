@@ -147,6 +147,7 @@ class DnsHandler(object):
         @return string describing the choice made
         """
         # print(pkt.show())
+        print(f"Spoofed dict {self.spoof_dict}, packet name: {pkt[DNSQR].qname}")
         if pkt[DNSQR].qname in self.spoof_dict:
             print(f"get_spoofed_dns_response {self.spoof_dict[pkt[DNSQR].qname]}")
             choice = "get_spoofed_dns_response"
