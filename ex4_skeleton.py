@@ -123,7 +123,7 @@ class DnsHandler(object):
         pkt_ans = sr1(real_pkt, verbose=False, iface=IFACE)
         print("pkt ans")
         fake_pkt = IP(dst=pkt[IP].src, src=NETWORK_DNS_SERVER_IP) / UDP(sport=53, dport=pkt[UDP].src) / DNS()
-	print("fake pkt")
+        print("fake pkt")
         fake_pkt[DNS] = pkt_ans[DNS]
         print(f"Got DNS real response of {self.real_dns_server_ip}")
         return fake_pkt

