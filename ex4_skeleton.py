@@ -125,7 +125,7 @@ class DnsHandler(object):
         fake_pkt = IP(dst=pkt[IP].src, src=NETWORK_DNS_SERVER_IP) / UDP(sport=53, dport=pkt[UDP].sport) / DNS()
         print("fake pkt")
         fake_pkt[DNS] = pkt_ans[DNS]
-        print(f"Got DNS real response of {self.real_dns_server_ip}")
+        print(f"Got DNS real response of {pkt[UDP].sport}")
         return fake_pkt
 
     def get_spoofed_dns_response(self, pkt: scapy.packet.Packet, to: str) -> scapy.packet.Packet:
@@ -162,7 +162,7 @@ class DnsHandler(object):
             choice = "get_real_dns_response"
             pkt_to_send = self.get_real_dns_response(pkt)
 
-        scapy.send(pkt_to_send, iface=IFACE)
+        scapy.send(pkt_to_send, verbode=False, iface=IFACE)
         return choice
 
     def run(self) -> None:
