@@ -1,22 +1,16 @@
 from scapy.all import *
-from scapy.layers.l2 import ARP
+from scapy.layers.l2 import ARP, Ether
 
-ip_mac_pairs = {}
+ip_to_mac = {}
 
-mac_to_ip = {}
+
 def arp_display(pkt):
     if ARP in pkt and pkt[ARP].op == 2:  # ARP reply
-        if pkt[ARP].hwsrc in mac_to_ip != pkt[Ether].src:
-            if mac_to_ip[pkt[ARP].hwsrc] != pkt[Ether].src:
-            	print(f"ARP spoofing detected! Attacker IP: {pkt.src}")
+        if pkt[ARP].psrc in ip_to_mac != pkt[ARP].hwsrc:
+            if ip_to_mac[pkt[ARP].psrc] != pkt[ARP].hwsrc:
+                print(f"ARP spoofing detected! Attacker IP: {pkt[ARP].psrc}")
         else:
-            mac_to_ip[pkt[ARP].hwsrc] = pkt[Ether].src
-            
-def arp(pkt):
-    if ARP in pkt and pkt[ARP].op == 2:
-        if pkt[ARP].hwsrc !=  pkt[ARP].hwdst:
-           print("fuck you")     
-	   	
+            ip_to_mac[pkt[ARP].psrc] = pkt[ARP].hwsrc
 
 
-sniff(prn=arp, filter="arp", store=0)
+sniff(prn=arp_display, filter="arp", store=0)
